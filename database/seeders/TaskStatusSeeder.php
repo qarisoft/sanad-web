@@ -28,7 +28,7 @@ class TaskStatusSeeder extends Seeder
             ['name' => 'لم يرد', 'color' => '#ffff00', 'code' => TaskStatus::NotResponded],
             ['name' => 'تم الأرسال للمعاين', 'color' => '#f2f2f2', 'code' => TaskStatus::AcceptedByViewer],
             ['name' => 'مسودة', 'color' => '#ffffff', 'code' => TaskStatus::Draft],
-        ])->map(fn (Model $m) => $m->default = true);
+        ])->map(fn (Model $m) => $m->update(['default' => true]));
 
     }
 }

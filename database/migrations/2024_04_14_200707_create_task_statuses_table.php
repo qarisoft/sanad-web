@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use function Database\Factories\str_rand;
 
 return new class extends Migration
 {
@@ -18,6 +17,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->string('code')->nullable();
             $table->string('color')->nullable();
+            $table->boolean('default')->default(false);
 
             $table->timestamps();
         });

@@ -24,8 +24,9 @@ class PolygonSeeder extends Seeder
                 'name'     => $place->props->NL_NAME_1,
                 'place_id' => $place->props->id,
                 'data'     => json_encode($data),
+                'default'  => true,
 
-            ])->default = true;
+            ]);
         }
     }
 }
