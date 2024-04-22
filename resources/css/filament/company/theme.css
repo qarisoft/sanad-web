@@ -1,0 +1,23 @@
+@import '/vendor/filament/filament/resources/css/theme.css';
+
+@config 'tailwind.config.js';
+
+
+.fi-sidebar-item-icon{
+    @apply h-9 w-9 p-[9px] bg-white rounded-[15px] shadow-md text-primary-600
+}
+
+.fi-sidebar-item-active .fi-sidebar-item-icon{
+    @apply bg-primary-600 text-white
+
+}
+::-webkit-scrollbar{
+    width: 1px;
+}
+.fi-ta-filters >.flex.items-center.justify-between{
+    display: none;
+}
+.fi-sidebar-nav{
+    /*@apply ps-6 pe-0;*/
+}
+/*flex-grow flex flex-col gap-y-7 overflow-y-auto overflow-x-hidden px-6 py-8*/
