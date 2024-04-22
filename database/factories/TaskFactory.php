@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Location;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Random\RandomException;
@@ -25,8 +26,6 @@ class TaskFactory extends Factory
     public function definition(): array
     {
         return [
-            'lat'=>fake()->latitude,
-            'lng'=>fake()->longitude,
             'code'=>str_rand(),
             'must_do_at'=>Carbon::now()->add(rand(1,50),'hours'),
             'received_at'=>date("Y-m-d H:i:s"),

@@ -46,13 +46,14 @@ class ListTasks extends ListRecords
         }); //->filter(fn($a)=>$a>0);
 
         $this->red_data = $tasks->filter(function ($a) {
-            return $a['time'] <= 550;
-            //                and $a['time']> -(60*24*2);
+            return $a['time'] <= 60*100;
         })->toArray();
-        $this->blue_data = $tasks->filter(fn ($a) => $a['time'] <= 24 * 60)->toArray();
-        //        dump($tasks,
-        //            $this->red_data,
-        //            $this->blue_data
-        //            );
+        $this->blue_data = $tasks->filter(function ($a){
+            return  60*100 < $a['time'] and $a['time'] < 140 * 60;
+        } )->toArray();
+            //    dump($tasks,
+            //        $this->red_data,
+            //        $this->blue_data
+            //        );
     }
 }

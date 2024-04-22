@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Traits\Defaults;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -22,8 +23,6 @@ class Task extends Model
         'finished_at',
         'published_at',
         'customer_id',
-        'lat',
-        'lng',
     ];
 
     protected $appends = [
@@ -48,35 +47,45 @@ class Task extends Model
     }
 
 
-
-
-
-    public function getLocationAttribute(): array
+    static function booted()
     {
-        return [
-            "lat" => (float)$this->lat,
-            "lng" => (float)$this->lng,
-        ];
+        static::created( function(Task $task){
+            $task->loc()->create();
+        });
+        static::deleted(function(Task $task){
+            $task->loc()->delete();
+        });
+
+
     }
 
-    public function setLocationAttribute(?array $location): void
-    {
-        if (is_array($location)) {
-            $this->attributes['lat'] = $location['lat'];
-            $this->attributes['lng'] = $location['lng'];
-            unset($this->attributes['location']);
-        }
+
+
+    public function loc(){
+        return $this->morphOne(Location::class,'item');
     }
 
-    public static function getLatLngAttributes(): array
+    public  function location():Attribute
     {
-        return [
-            'lat' => 'lat',
-            'lng' => 'lng',
-        ];
-    }
-    public static function getComputedLocation(): string
-    {
-        return 'location';
+        return Attribute::make(
+            get:function(){
+                $loc = $this->loc()->first();
+                return [
+                    'lat'=>$loc->lat,
+                    'lng'=>$loc->lng,
+    //                 'place_id'=>$loc->place_id,
+                ];
+            }
+    //         set:fn($a)=>dump($a)
+    //         // function($location){
+    //             // if (is_array($location))
+    //             // dump($location);
+    //             // $this->loc()->first()->update([
+    //             //     'lat'=>$location['lat'],
+    //             //     'lng'=>$location['lng'],
+    //             //     'place_id'=>$location['place_id'],
+    //             // ]);
+    //         // }
+        );
     }
 }

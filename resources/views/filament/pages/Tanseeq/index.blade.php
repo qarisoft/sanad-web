@@ -15,10 +15,8 @@
             <div class="flex justify-evenly rounded bg-red-600d text-gray-900 font-bold">
                             <div class="p-1.5">الكود</div>
                             <div class="p-1.5">الوقت الباقي</div>
-
             </div>
         <div class="w-full  flex-1 overflow-y-scroll">
-{{--            <div class="overflow-y-scroll">--}}
                 @foreach( $red_data as $r )
                     <div class="flex  p-2 bg-red-600 mt-1 text-gray-100 text-center rounded ">
                         @php $a= ListTasks::getUrl()  @endphp
@@ -28,24 +26,16 @@
                     </div>
 
                 @endforeach
-
-{{--            </div>--}}
-{{--                <table class="w-full  text-white rounded p-2">--}}
-{{--                    <thead class="p-1 bg-red-600 overflow-clip rounded">--}}
-{{--                        <tr >--}}
-{{--                        </tr>--}}
-{{--                    </thead>--}}
-{{--                    <tbody>--}}
-{{--                    </tbody>--}}
-{{--                </table>--}}
-{{--                    <div class="bg-red-600 text-white p-1 rounded">--}}
-{{--                        الوقت--}}
-{{--                        <span>{{ number_format(intval($r['time'])/60,2) }} </span>--}}
-{{--                        | الكود--}}
-
-{{--                    </div>--}}
         </div>
-        <div class="w-full bg-amber-5d0 flex-1 overflow-y-scroll">
+        <div class="w-full bg-amber-5d flex-1 overflow-y-scroll">
+            @foreach( $blue_data as $r )
+                <div class="flex  p-2 bg-blue-600 mt-1 text-gray-100 text-center rounded ">
+                    @php $a= ListTasks::getUrl()  @endphp
+                    <a href="{{ $a.'/'.$r['task']->id.'/view' }}"
+                    class="flex-1" >{{ $r['task']->code }}</a>
+                    <div class="flex-1" >{{ number_format(intval($r['time'])/60,2) }}<small>  ساعة </small></div>
+                </div>
+            @endforeach
         </div>
 
     </div>

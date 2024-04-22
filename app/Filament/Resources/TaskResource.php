@@ -90,9 +90,12 @@ class TaskResource extends Resource
                         ->afterStateUpdated(function($state, callable $get, callable $set){
 //                            $set('user',null);
 //                            $a = Filament::getTenant()->viewers();
-//                            dump($u);
-//                            dump($state);
-                        }),
+                        //    dump($state);
+
+
+                            // dump($state);
+                        })
+                        ,
 
                         Section::make()->columns(2)->schema([
                             TextInput::make('lat')->columns(1),

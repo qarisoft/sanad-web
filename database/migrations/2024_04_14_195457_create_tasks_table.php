@@ -17,8 +17,8 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->string('lat')->nullable();
-            $table->string('lng')->nullable();
+            // $table->string('lat')->nullable();/
+            // $table->string('lng')->nullable();
             $table->string('code');
             $table->string('notes')->nullable();
 
