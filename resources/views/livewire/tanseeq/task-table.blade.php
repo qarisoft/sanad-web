@@ -28,7 +28,9 @@
                     </div>
                 @endforeach
             </div>
+    @script
     <script>
+
             window.Echo.join('tasks')
                 .subscribed(function () {
                     console.log('subscribed')
@@ -38,5 +40,6 @@
                     $wire.$call('up')
             })
     </script>
+    @endscript
 </div>
 
