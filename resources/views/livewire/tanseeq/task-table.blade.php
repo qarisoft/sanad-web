@@ -8,7 +8,7 @@
             </div>
             <div class="w-full  flex-1 overflow-y-scroll">
                 @foreach( $red_data as $r )
-                    <div class="flex  p-2 bg-red-600 mt-1 text-gray-100 text-center rounded ">
+                    <div style="background-color: #e62f29" class="flex  p-2 bg-red-600 mt-1 text-gray-200 text-center rounded ">
                         <a href="{{ $a.'/'.$r['task']->id.'/view' }}"
                            class="flex-1" >{{ $r['task']->code }}</a>
                         <div class="flex-1" >
@@ -18,9 +18,9 @@
 
                 @endforeach
             </div>
-            <div class="w-full bg-amber-5d flex-1 overflow-y-scroll">
+            <div class="w-full  flex-1 overflow-y-scroll">
                 @foreach( $blue_data as $r )
-                    <div class="flex  p-2 bg-blue-600 mt-1 text-gray-100 text-center rounded ">
+                    <div style="background-color: #0b64e7" class="flex  p-2  mt-1 text-gray-200 text-center rounded ">
                                         @php $a= ''  @endphp
                         <a href="{{ $a.'/'.$r['task']->id.'/view' }}"
                            class="flex-1" >{{ $r['task']->code }}</a>
@@ -28,13 +28,6 @@
                     </div>
                 @endforeach
             </div>
-
-
-
-
-
-
-    @script
     <script>
             window.Echo.join('tasks')
                 .subscribed(function () {
@@ -45,6 +38,5 @@
                     $wire.$call('up')
             })
     </script>
-    @endscript
 </div>
 

@@ -17,7 +17,7 @@
     </style>
     <div class="flex gap-1 hscreen overflow-hidden" >
 
-    <div class="flex-1 p-2 overflow-y-scroll">
+    <div class="flex-1 p-2 overflow-y-scroll ">
 
         {{ $this->table }}
 

@@ -7,6 +7,7 @@ use Filament\Notifications\Notification;
 use Filament\Facades\Filament;
 use Livewire\Attributes\On;
 use Livewire\Component;
+use function Symfony\Component\String\s;
 
 //use View;
 
@@ -29,6 +30,7 @@ class TaskTable extends Component
     }
     public function update(): void
     {
+        $s = 10;
         $this->a = ListTasks::getUrl();
         $tasks   = Filament::getTenant()->tasks()->published()->get()
             ->map(function ($a) {
@@ -40,11 +42,11 @@ class TaskTable extends Component
                         'task' => $a,
                     ];
             });
-        $this->red_data = $tasks->filter(function ($a) {
-            return $a['time'] < 5 and $a['time'] > 0;
+        $this->red_data = $tasks->filter(function ($a)use($s) {
+            return $a['time'] < $s and $a['time'] > 0;
         })->toArray();
-        $this->blue_data = $tasks->filter(function ($a) {
-            return $a['time'] > 5 and $a['time'] < 48;
+        $this->blue_data = $tasks->filter(function ($a)use ($s) {
+            return $a['time'] > $s and $a['time'] < 48;
         })->toArray();
     }
 
