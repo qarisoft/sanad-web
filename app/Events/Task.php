@@ -10,14 +10,14 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class Task
+class Task implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(public \App\Models\Task $task)
     {
         //
     }
@@ -30,7 +30,13 @@ class Task
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PresenceChannel('tasks'),
         ];
     }
+
+    public function broadcastAs(): string
+    {
+        return 'tasks';
+    }
+
 }

@@ -2,20 +2,21 @@
 
 namespace App\Models;
 
-use App\Traits\Defaults;
+use App\Events\TaskPublished;
+use App\Traits\BelongsToCompany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Support\Facades\DB;
-//use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 
+//use Illuminate\Support\Facades\DB;
 
 class Task extends Model
 {
-
+    use BelongsToCompany;
     use HasFactory;
+
     protected $fillable = [
         'code',
         'received_at',
@@ -24,68 +25,65 @@ class Task extends Model
         'published_at',
         'customer_id',
     ];
+    protected $casts=[
+        'must_do_at'=>'datetime'
+    ];
 
     protected $appends = [
         'location',
     ];
 
-    public function company(): BelongsToMany
-    {
-        return $this->belongsToMany(Company::class);
-    }
     public function scopePublished($query)
     {
         return $query->where('is_published', true);
     }
+
+    public function publish(): void
+    {
+//        $this->is_published=true;
+//        $this->published_at=now();
+//        $this->save();
+//        event(new TaskPublished($this));
+        event(new \App\Events\Task($this));
+    }
+
     public function status(): BelongsTo
     {
         return $this->belongsTo(TaskStatus::class);
     }
+
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);
     }
 
-
-    static function booted()
+    public static function booted(): void
     {
-        static::created( function(Task $task){
+        static::created(function (Task $task) {
             $task->loc()->create();
         });
-        static::deleted(function(Task $task){
+        static::deleted(function (Task $task) {
             $task->loc()->delete();
         });
 
-
     }
 
-
-
-    public function loc(){
-        return $this->morphOne(Location::class,'item');
+    public function loc(): MorphOne
+    {
+        return $this->morphOne(Location::class, 'item');
     }
 
-    public  function location():Attribute
+    public function location(): Attribute
     {
         return Attribute::make(
-            get:function(){
+            get: function () {
                 $loc = $this->loc()->first();
+
                 return [
-                    'lat'=>$loc->lat,
-                    'lng'=>$loc->lng,
-    //                 'place_id'=>$loc->place_id,
+                    'lat' => $loc->lat,
+                    'lng' => $loc->lng,
                 ];
             }
-    //         set:fn($a)=>dump($a)
-    //         // function($location){
-    //             // if (is_array($location))
-    //             // dump($location);
-    //             // $this->loc()->first()->update([
-    //             //     'lat'=>$location['lat'],
-    //             //     'lng'=>$location['lng'],
-    //             //     'place_id'=>$location['place_id'],
-    //             // ]);
-    //         // }
         );
     }
 }

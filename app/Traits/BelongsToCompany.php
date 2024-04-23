@@ -2,22 +2,14 @@
 
 namespace App\Traits;
 
+use App\Models\Company;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Collection;
 
-trait Defaults
+trait BelongsToCompany
 {
-    public static function defaults(): Collection
+    public function company(): BelongsToMany
     {
-        return static::query()->where('default', true);
-    }
-
-    public function scopeDefault($q)
-    {
-        return $q->where('default', true);
-    }
-
-    public function is_default(): bool
-    {
-        return $this->default ?? false;
+        return $this->belongsToMany(Company::class);
     }
 }

@@ -3,11 +3,11 @@
 namespace App\Filament\Resources\TaskResource\Pages;
 
 use App\Filament\Resources\TaskResource;
-use Carbon\Carbon;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Contracts\View\View;
+use Livewire\Attributes\On;
 
 class ListTasks extends ListRecords
 {
@@ -31,29 +31,45 @@ class ListTasks extends ListRecords
 
     public ?array $blue_data = [];
 
+    public $a;
+
     public function mount(): void
     {
-        $t     = now()->add(-3, 'hours')->format('Y-m-d-H:i:s');
-        $tasks = Filament::getTenant()->tasks()->published()->get()->map(function ($a) {
-            return
-                [
-                    'time' => Carbon::now()
-                        ->diffInMinutes(
-                            Carbon::parse($a->must_do_at)
-                        ),
-                    'task' => $a,
-                ];
-        }); //->filter(fn($a)=>$a>0);
+        $this->update();
+    }
 
+//    #[On('echo:tasks,tasks')]
+    public function go($event): void
+    {
+        dump($event);
+//        $this->update();
+    }
+
+    public function getListeners(): array
+    {
+        return [
+            "echo:tasks,tasks" => 'go',
+        ];
+    }
+
+    public function update(): void
+    {
+        $this->a = ListTasks::getUrl();
+        $tasks   = Filament::getTenant()->tasks()->published()->get()
+            ->map(function ($a) {
+                return
+                    ['time' => now()
+                        ->diffInHours(
+                            $a->must_do_at
+                        ),
+                        'task' => $a,
+                    ];
+            });
         $this->red_data = $tasks->filter(function ($a) {
-            return $a['time'] <= 60*100;
+            return $a['time'] < 5 and $a['time'] > 0;
         })->toArray();
-        $this->blue_data = $tasks->filter(function ($a){
-            return  60*100 < $a['time'] and $a['time'] < 140 * 60;
-        } )->toArray();
-            //    dump($tasks,
-            //        $this->red_data,
-            //        $this->blue_data
-            //        );
+        $this->blue_data = $tasks->filter(function ($a) {
+            return $a['time'] > 5 and $a['time'] < 48;
+        })->toArray();
     }
 }

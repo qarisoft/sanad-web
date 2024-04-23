@@ -16,9 +16,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+//        FilamentAsset::
         FilamentAsset::register([
 
             Js::make('map', resource_path('js/map.js')),
+//            Js::make('app', resource_path('js/app.js')),
             AlpineComponent::make('map-polygon-component', resource_path() .'/js/dist/components/map-polygon.js'),
             AlpineComponent::make('map-location-component', resource_path() .'/js/dist/components/map-location.js'),
             AlpineComponent::make('map-area-component', resource_path() .'/js/dist/components/map-area.js'),
