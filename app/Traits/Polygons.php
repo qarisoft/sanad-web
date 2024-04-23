@@ -34,7 +34,7 @@ trait Polygons
                 if ($inters == $point->getX()) { // Check if point is on the polygon boundary (other than horizontal)
                     return "boundary";
                 }
-                if ($v1->x == $v2->x || $point->getX() <= $inters) {
+                if ($v1->getX() == $v2->getX() || $point->getX() <= $inters) {
                     $intersections++;
                 }
             }

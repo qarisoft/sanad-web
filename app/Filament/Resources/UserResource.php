@@ -29,10 +29,12 @@ class UserResource extends Resource
     protected static ?string $model = User::class;
 
     protected static ?string $navigationIcon = 'heroicon-s-user-group';
-    public static function getNavigationGroup():string
+
+    public static function getNavigationGroup(): string
     {
         return __('Users');
     }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -44,28 +46,28 @@ class UserResource extends Resource
                         Section::make('info')->columnSpan(1)
 
                             ->schema([
-                                TextInput::make('name')    ->required(),
-                                TextInput::make('email')   ->required(),
+                                TextInput::make('name')->required(),
+                                TextInput::make('email')->required(),
                                 TextInput::make('password')->required(),
                             ]),
                         Section::make('specifications')->columnSpan(1)
                             ->schema([
                                 Toggle::make('is_active'),
-                                Toggle::make('is_viewer')->disabled(fn($operation)=>$operation=='edit'),
+                                Toggle::make('is_viewer')->disabled(fn ($operation) => $operation == 'edit'),
 
-                            ])
-                    ])->hidden(fn($operation)=>$operation!='create'),
+                            ]),
+                    ])->hidden(fn ($operation) => $operation != 'create'),
 
                     Step::make('map')->columns(4)
-                    ->schema([
-                        Toggle::make('is_active'),
-                        MapArea::make('place')
-                            ->hiddenLabel()
-                            ->live()
-                            ->columnSpan(4)
-                    ])
+                        ->schema([
+                            Toggle::make('is_active'),
+                            MapArea::make('place')
+                                ->hiddenLabel()
+                                ->live()
+                                ->columnSpan(4),
+                        ]),
 
-                ])->columnSpanFull()
+                ])->columnSpanFull(),
             ]);
     }
 
@@ -78,20 +80,20 @@ class UserResource extends Resource
                 TextColumn::make('place_id'),
                 Tables\Columns\IconColumn::make('is_active')->boolean(),
                 TextColumn::make('is_viewer')
-                    ->formatStateUsing(fn($state)=>$state==0?'employee':'viewer')
-                    ->badge() ->color(fn (string $state): string => match ($state) {
+                    ->formatStateUsing(fn ($state) => $state == 0 ? 'employee' : 'viewer')
+                    ->badge()->color(fn (string $state): string => match ($state) {
                         '0' => 'warning',
                         '1' => 'success',
                     }),
             ])
             ->filters([
                 Tables\Filters\Filter::make('active')
-                    ->query(fn (Builder $query): Builder => $query->where('is_active', true))
-            ],layout: Tables\Enums\FiltersLayout::AboveContent,)
+                    ->query(fn (Builder $query): Builder => $query->where('is_active', true)),
+            ], layout: Tables\Enums\FiltersLayout::AboveContent, )
 //
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make()
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -110,12 +112,10 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListUsers::route('/'),
+            'index'  => ListUsers::route('/'),
             'create' => CreateUser::route('/create'),
-            'view' => ViewUser::route('/{record}/view'),
-            'edit' => EditUser::route('/{record}/edit'),
+            'view'   => ViewUser::route('/{record}/view'),
+            'edit'   => EditUser::route('/{record}/edit'),
         ];
     }
-
-
 }

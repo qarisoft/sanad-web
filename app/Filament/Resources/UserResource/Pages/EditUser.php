@@ -46,7 +46,7 @@ class EditUser extends EditRecord
 
 
 
-protected function getRedirectUrl() : ?string{
-        return ListUsers::getUrl();
-}
+    protected function getRedirectUrl() : ?string{
+            return ListUsers::getUrl();
+    }
 }

@@ -2,12 +2,15 @@
 
 namespace App\Models;
 
-use App\Events\TaskPublished;
 use App\Traits\BelongsToCompany;
+use Carbon\Carbon;
+use Filament\Notifications\Notification;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 
 //use Illuminate\Support\Facades\DB;
@@ -25,8 +28,9 @@ class Task extends Model
         'published_at',
         'customer_id',
     ];
-    protected $casts=[
-        'must_do_at'=>'datetime'
+
+    protected $casts = [
+        'must_do_at' => 'datetime',
     ];
 
     protected $appends = [
@@ -40,11 +44,29 @@ class Task extends Model
 
     public function publish(): void
     {
-//        $this->is_published=true;
-//        $this->published_at=now();
-//        $this->save();
-//        event(new TaskPublished($this));
-        event(new \App\Events\Task($this));
+        $title = 'Saved successfully';
+        if (! $this->is_published) {
+            $this->is_published = true;
+            $this->published_at = now();
+            $this->save();
+            event(new \App\Events\Task($this));
+
+            return;
+        }
+//        $title = 'task is already published';
+//        Notification::make()
+//            ->title($title)->danger()->send();
+
+    }
+
+    public function allowedViewers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
+    }
+
+    public function users()
+    {
+        return $this->belongsToMany(User::class);
     }
 
     public function status(): BelongsTo
@@ -85,5 +107,14 @@ class Task extends Model
                 ];
             }
         );
+    }
+
+    public function scopeRed(Builder $q)
+    {
+        $red = 1;
+        $now = now()->add(1, 'hours');
+        $q->whereBetween('must_do_at', [now(), $now]);
+
+        Carbon::now();
     }
 }

@@ -3,7 +3,9 @@
 use App\Models\Company;
 use App\Models\Customer;
 use App\Models\Location;
+use App\Models\Task;
 use App\Models\TaskStatus;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -35,6 +37,13 @@ return new class extends Migration
             $table->timestamp('finished_at')->nullable();
             $table->timestamp('published_at')->nullable();
             $table->timestamps();
+        });
+
+
+        Schema::create('task_user', function (Blueprint $table){
+            $table->primary(['task_id','user_id']);
+            $table->foreignIdFor(Task::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
         });
     }
 

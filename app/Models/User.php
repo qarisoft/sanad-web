@@ -43,6 +43,10 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         'remember_token',
     ];
 
+    public function visibleTasks(): BelongsToMany
+    {
+        return $this->belongsToMany(Task::class);
+    }
 
     protected function casts(): array
     {

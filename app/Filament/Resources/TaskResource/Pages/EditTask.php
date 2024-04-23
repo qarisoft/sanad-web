@@ -17,23 +17,15 @@ class EditTask extends EditRecord
         ];
     }
 
-    function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model
+    public function handleRecordUpdate(\Illuminate\Database\Eloquent\Model $record, array $data): \Illuminate\Database\Eloquent\Model
     {
-        // $record->update($data);
-        // dump($data);
-        // $location = $record->loc()->first();
-        // $location->lat= $data['lat'];
-        // $location->lng= $data['lng'];
-        // $location->place_id=$data['place_id'];
-        // $location->save();
-        // $record->save();
         $record->loc()->first()->update($data['location']);
-            // dump($location,$record);
 
-        // return $record;
         return parent::handleRecordUpdate($record, $data);
     }
 
-
-
+    protected function getRedirectUrl(): ?string
+    {
+        return ListTasks::getUrl();
+    }
 }

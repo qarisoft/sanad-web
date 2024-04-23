@@ -2,16 +2,18 @@
 
 namespace App\Models\Map;
 
-use App\Models\Company;
+use App\Helper\Geocoder\Point;
+use App\Traits\BelongsToCompany;
 use App\Traits\Defaults;
 use App\Traits\Polygons;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Support\Collection;
 
 class Polygon extends Model
 {
+    use BelongsToCompany;
     use Defaults;
     use HasFactory;
     use Polygons;
@@ -20,24 +22,32 @@ class Polygon extends Model
         'place_id', 'name', 'data',
     ];
 
-    public function company(): BelongsToMany
+    public function points(): Attribute
     {
-        return $this->belongsToMany(Company::class);
+        return Attribute::make(
+            get: function () {
+                return collect(
+                    json_decode($this->data)
+                )->map(fn ($a) => new Point($a->lat, $a->lng));
+            }
+
+        );
     }
 
-    //    public function scopeDefault($q)
-    //    {
-    //        return $q->where('default',true);
-    //    }
-    //
-    //    public function isDefault():bool
-    //    {
-    //        return $this->default??false;
-    //    }
-    //    protected static function booted():void
-    //    {
-    //        static::addGlobalScope('default', function (Builder $builder) {
-    //            $builder->orWhere('default', true);
-    //        });
-    //    }
+    public function check($x, $y)
+    {
+        $point = new Point($x, $y);
+
+        return $this->checkPointPosition($point, $this->points) == 'inside';
+    }
+
+    public static function getPointPlaceIds($x, $y): Collection
+    {
+        //        $a =
+        return static::all()->filter(function ($polygon) use ($x, $y) {
+            return $polygon->check($x, $y);
+        })->map(fn ($p) => $p->place_id);
+
+        //        return $a;
+    }
 }

@@ -8,7 +8,7 @@ trait Defaults
 {
     public static function defaults(): Collection
     {
-        return static::query()->where('default', true);
+        return static::all()->where('default', true);
     }
 
     public function scopeDefault($q)

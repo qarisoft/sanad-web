@@ -32,7 +32,7 @@ class PolygonResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make()->schema([
-
+                    Forms\Components\TextInput::make('name')->required(),
                     MapPolygon::make('data')
                         ->columnSpanFull()->live()
 //                        ->afterStateUpdated(function ($state){

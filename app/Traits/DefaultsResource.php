@@ -8,7 +8,7 @@ trait DefaultsResource
 {
     public static function getEloquentQuery(): Builder
     {
-        $q = parent::getEloquentQuery();
+        $q = parent::getEloquentQuery()->latest();
         $q->orWhere('default', true);
 
         return $q;

@@ -8,9 +8,9 @@ use App\Filament\Resources\TaskResource\Pages\ListTasks;
 use App\Filament\Resources\TaskResource\Pages\ViewTask;
 use App\Forms\Components\MapLocation;
 use App\Models\Customer;
+use App\Models\Map\Polygon;
 use App\Models\Task;
 use App\Models\User;
-use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Components\DatePicker;
@@ -20,6 +20,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\IconColumn;
@@ -58,24 +59,42 @@ class TaskResource extends Resource
                             ->label(__('must_do_at'))
                             ->native(false)
                             ->default(now()->add(10, 'hours')),
-                        Forms\Components\Toggle::make('allUsers')->live(),
+                        Forms\Components\Toggle::make('allUsers')
+                            ->live()
+                            ->afterStateUpdated(function ($state,$set) {
+//                                dump($state);
+                                if ($state){
+
+                                    $set('users',Filament::getTenant()->viewers()->pluck( 'id')->toArray());
+                                }
+                            })
+                        ,
 
                         Forms\Components\CheckboxList::make('users')
+                            ->columns(2)
                             ->live()
-                            ->options(function ($get) {
+
+                            ->relationship('users')
+                            ->options(function ($get, $operation, ?Task $record) {
+                                if ($operation == 'view') {
+                                    return $record->allowedViewers()->get()->pluck('name', 'id');
+                                }
                                 if ($get('allUsers')) {
                                     return Filament::getTenant()->viewers()->pluck('name', 'id');
                                 }
-                                if ($location = $get('location') and array_key_exists('place_id', $location)) {
-                                    $place_id = $location['place_id'];
-                                    $u        = User::wherePlaceId($place_id)->pluck('name', 'id');
+                                if ($location = $get('location') and array_key_exists('lat', $location) and array_key_exists('lng', $location)) {
+                                    $a = Polygon::getPointPlaceIds($location['lat'], $location['lng']);
+                                    $a = $a->map(function ($place_id) {
+                                        return User::wherePlaceId($place_id)->pluck('name', 'id');
+                                    })->flatten()->toArray();
 
-                                    return $u;
+                                    return $a;
                                 }
 
-                                //                            return
                                 return [];
-                            })->searchable(),
+                            })
+                                                    ->searchable()
+                        ,
                     ]),
 
                     Section::make()->columnSpan(2)->schema([
@@ -112,7 +131,7 @@ class TaskResource extends Resource
                     ->searchable(),
                 IconColumn::make('is_published')
                     ->boolean()
-                    ->falseIcon('heroicon-o-bolt')
+                    ->falseIcon('heroicon-o-server-stack')
                     ->falseColor('primary')
                     ->disabledClick(fn ($state) => $state),
                 TextColumn::make('published_at')
@@ -126,20 +145,11 @@ class TaskResource extends Resource
                 TextColumn::make('city.name')
                     ->numeric()
                     ->sortable(),
-                //                TextColumn::make('location.address')
-                //                    ->numeric()
-                //                    ->sortable()->limit('15'),
                 TextColumn::make('received_at')
                     ->since()
                     ->sortable(),
                 TextColumn::make('must_do_at')
-                    ->since()
-//                    ->sortable()->formatStateUsing(function ($record) {
-//                    return '# '.$record->must_do_at.' # '.$record->must_do_at->diffForHumans().' # ';
-//                    })
-                ,
-//                TextColumn::make('must_do_at')
-//                    ->sortable()->label('salah'),
+                    ->since(),
 
                 TextColumn::make('deleted_at')
                     ->dateTime()
@@ -158,19 +168,21 @@ class TaskResource extends Resource
                 TextColumn::make('viewer.name')
                     ->label(__('Viewer'))
                     ->sortable(),
-                //                Tables\Columns\ToggleColumn::make('is_published')->label('Published'),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('publish')->action(function (Task $record) {
-//                    dump($record);
-                    $record->publish();
-                })->name('publish')
-//                    ->requiresConfirmation()
-                ,
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\Action::make('publish')
+                    ->action(function (Task $record) {
+                        $record->publish();
+                        Notification::make()
+                            ->title('Task Published Successfully')->success()->send();
+
+                    })
+                    ->requiresConfirmation()
+                    ->hidden(fn ($record) => $record->is_published)
+                    ->icon('heroicon-s-map'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
