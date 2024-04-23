@@ -34,7 +34,7 @@ return [
             'hostname' => env('REVERB_HOST'),
             'options' => [
                 'tls' => [
-                    'local_cert'=>env('SSL','')
+//                    'local_cert'=>env('SSL','')
                 ],
             ],
             'max_request_size' => env('REVERB_MAX_REQUEST_SIZE', 10_000),

@@ -61,40 +61,33 @@ class TaskResource extends Resource
                             ->default(now()->add(10, 'hours')),
                         Forms\Components\Toggle::make('allUsers')
                             ->live()
-                            ->afterStateUpdated(function ($state,$set) {
-//                                dump($state);
-                                if ($state){
-
-                                    $set('users',Filament::getTenant()->viewers()->pluck( 'id')->toArray());
+                            ->afterStateUpdated(function ($state, $set) {
+                                if ($state) {
+                                    $set('users', Filament::getTenant()->viewers()->pluck('id')->toArray());
                                 }
-                            })
-                        ,
+                            }),
 
                         Forms\Components\CheckboxList::make('users')
-                            ->columns(2)
+//                            ->columns(2)
                             ->live()
-
                             ->relationship('users')
                             ->options(function ($get, $operation, ?Task $record) {
-                                if ($operation == 'view') {
-                                    return $record->allowedViewers()->get()->pluck('name', 'id');
+                                if ($operation == 'view'||$operation == 'edit' ) {
+                                    return $record->allowedViewers->pluck('name', 'id');
                                 }
                                 if ($get('allUsers')) {
                                     return Filament::getTenant()->viewers()->pluck('name', 'id');
                                 }
                                 if ($location = $get('location') and array_key_exists('lat', $location) and array_key_exists('lng', $location)) {
+                                    if ($location['lat'] and $location['lng']){
                                     $a = Polygon::getPointPlaceIds($location['lat'], $location['lng']);
-                                    $a = $a->map(function ($place_id) {
-                                        return User::wherePlaceId($place_id)->pluck('name', 'id');
-                                    })->flatten()->toArray();
-
-                                    return $a;
+                                        return User::all()->whereIn('place_id',$a)->pluck('name','id');
+                                    }
                                 }
 
                                 return [];
                             })
-                                                    ->searchable()
-                        ,
+                            ->searchable(),
                     ]),
 
                     Section::make()->columnSpan(2)->schema([

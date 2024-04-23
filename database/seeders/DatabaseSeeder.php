@@ -58,7 +58,6 @@ class DatabaseSeeder extends Seeder
             'owner_id' => $cUser->id,
         ]);
 
-        //        $customers = Customer::factory(10)->hasTasks()->create();
 
         $comp->customers->map(function ($a) {
             $a->tasks()->factory(40)->create();
@@ -76,7 +75,6 @@ class DatabaseSeeder extends Seeder
                 $comp->tasks()->attach($t);
             });
         });
-        //        $t=Task::all()->take();
 
     }
 }

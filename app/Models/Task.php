@@ -44,7 +44,6 @@ class Task extends Model
 
     public function publish(): void
     {
-        $title = 'Saved successfully';
         if (! $this->is_published) {
             $this->is_published = true;
             $this->published_at = now();
@@ -64,7 +63,7 @@ class Task extends Model
         return $this->belongsToMany(User::class);
     }
 
-    public function users()
+    public function users(): BelongsToMany
     {
         return $this->belongsToMany(User::class);
     }

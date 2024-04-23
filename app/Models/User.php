@@ -96,13 +96,11 @@ class User extends Authenticatable implements FilamentUser, HasTenants
 
     }
 
-    public static function wherePlaceId($id)
+    public static function wherePlaceId( $id)
     {
-        return User::all()->where('place_id','like',$id);
+        return User::all()->where('place_id',$id);
     }
-//    static function creating() {
-//
-//    }
+
     public function location(): MorphOne
     {
         return $this->morphOne(Location::class,'item');

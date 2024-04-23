@@ -19,13 +19,16 @@ class Location extends Model
         'state',
         'zip',
         'address',
-        'place_id'
+        'place_id',
     ];
 
-    public function item():MorphTo
+    public function item(): MorphTo
     {
         return $this->morphTo('item');
-
     }
 
+//    public function users()
+//    {
+////        return $this->morphedByMany($related, $name)
+//    }
 }

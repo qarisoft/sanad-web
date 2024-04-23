@@ -134,10 +134,16 @@
                             place_id: p_data.place_id
                         })
                         current.setMap(map)
-                        if (this.state != null && this.state.place_id) {
+                        if (this.state !== null && this.state.place_id) {
                             let a = new google.maps.LatLng(this.state.lat, this.state.lng)
-                            map.setCenter(a)
+                            // map.setCenter(a)
                         }
+                            let latlngbounds = new google.maps.LatLngBounds();
+                            current.getPath().forEach((loc)=>{
+                                latlngbounds.extend(loc)
+                            })
+                            map.setCenter(latlngbounds.getCenter())
+                            map.fitBounds(latlngbounds)
                     }
                     console.log(mode)
                     if (mode !== 'view') {

@@ -41,12 +41,12 @@ class Polygon extends Model
         return $this->checkPointPosition($point, $this->points) == 'inside';
     }
 
-    public static function getPointPlaceIds($x, $y): Collection
+    public static function getPointPlaceIds($x, $y)
     {
         //        $a =
         return static::all()->filter(function ($polygon) use ($x, $y) {
             return $polygon->check($x, $y);
-        })->map(fn ($p) => $p->place_id);
+        })->map(fn ($p) => $p->place_id)->flatten()->all();
 
         //        return $a;
     }
