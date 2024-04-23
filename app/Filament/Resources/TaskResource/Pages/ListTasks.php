@@ -22,7 +22,7 @@ class ListTasks extends ListRecords
 
     public function getHeader(): ?View
     {
-        return view('filament.pages.tanseeq.header');
+        return view('filament.pages.Tanseeq.header');
     }
 
     protected static string $view = 'filament.pages.Tanseeq.index';
